@@ -1,14 +1,34 @@
 #!/usr/bin/env bash
 # Configures Nginx with a 301 permanent redirect on /redirect_me
 
+# Update packages and install Nginx
 apt-get update -y
 apt-get install nginx -y
 
+# Configure default landing pages
 echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
 echo "Holberton School for the win!" > /var/www/html/index.html
 
-# Inject the rewrite rule directly inside the default server configuration block
-REDIRECT_RULE="\\\tlocation /redirect_me {\n\t\treturn 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n\t}"
-sed -i "s|server_name _;|$&\n$REDIRECT_RULE|" /etc/nginx/sites-available/default
+# Overwrite the Nginx default configuration cleanly with a Here Document
+cat << 'EOF' > /etc/nginx/sites-available/default
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
 
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+}
+EOF
+
+# Restart Nginx to apply the changes safely
 service nginx restart
