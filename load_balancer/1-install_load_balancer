@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Installs HAProxy and configures it to distribute traffic via roundrobin
+
+# Update packages and install HAProxy
+sudo apt-get update -y
+sudo apt-get install haproxy -y
+
+# Configure HAProxy frontend and backend blocks
+sudo bash -c 'cat <<CONFIG >> /etc/haproxy/haproxy.cfg
+
+frontend http_front
+    bind *:80
+    default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server 7130-web-01 54.172.198.150:80 check
+    server 7130-web-02 54.172.198.151:80 check
+CONFIG'
+
+# Restart HAProxy service
+sudo service haproxy restart
