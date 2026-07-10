@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Configures Nginx to serve a custom 404 error response page
+
+apt-get update -y
+apt-get install nginx -y
+
+echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
+echo "Holberton School for the win!" > /var/www/html/index.html
+echo "Ceci n'est pas une page" > /var/www/html/custom_404.html
+
+# Inject custom 404 configuration directives inside the server block
+sed -i '/server_name _;/a \\terror_page 404 /custom_404.html;\n\tlocation = /custom_404.html {\n\t\troot /var/www/html;\n\t\tinternal;\n\t}' /etc/nginx/sites-available/default
+
+service nginx restart
