@@ -5,7 +5,7 @@
 sudo apt-get update -y
 sudo apt-get install haproxy -y
 
-# Configure HAProxy frontend and backend blocks
+# Configure HAProxy frontend and backend blocks with live IPs
 sudo bash -c 'cat <<CONFIG >> /etc/haproxy/haproxy.cfg
 
 frontend http_front
@@ -15,7 +15,7 @@ frontend http_front
 backend http_back
     balance roundrobin
     server 7130-web-01 54.172.198.150:80 check
-    server 7130-web-02 54.172.198.151:80 check
+    server 7130-web-02 3.89.111.203:80 check
 CONFIG'
 
 # Restart HAProxy service
