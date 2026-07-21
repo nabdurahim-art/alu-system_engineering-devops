@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Fixes Nginx configuration by checking and restoring the default site symlink
+
+LINK="/etc/nginx/sites-enabled/default"
+TARGET="/etc/nginx/sites-available/default"
+
+# Check if the symlink is missing or broken
+if [ ! -L "$LINK" ] || [ ! -e "$LINK" ]; then
+    rm -f "$LINK"
+    ln -s "$TARGET" "$LINK"
+fi
+
+# Ensure Nginx service is running
+service nginx restart
